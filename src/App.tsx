@@ -1,5 +1,4 @@
-//import NameIcon from './components/NameIcon';
-import { NameIcon } from './components/index';
+import NameIcon from './NameIcon';
 
 import './app.css';
 
