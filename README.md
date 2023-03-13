@@ -3,23 +3,25 @@
 ## はじめに
 
 自作のReactコンポーネントやライブラリを再利用する際、ファイルのコピー＆ペーストではなく、
-`npm install <ライブラリ名>`でインストールできると嬉しい(気がするだけ？)ですね。
-でも、個人的に再利用したいだけなので[npm](https://www.npmjs.com/)に登録するのもどうかと思っていました。
+`npm install <ライブラリ名>`でインストールできると嬉しいですね(気がします)。
+でも、[npm](https://www.npmjs.com/)に登録すると、全世界に登録されてしまうので、どうかと思っていました。
 
-そこで調べてみたところ[GitHub Packages](https://github.co.jp/features/packages)で、ライブラリを公開することができることが分かりましたので、手順を調査しました。
+（npmは登録後72時間経過すると簡単に消せなくなるそうです。[あの時の俺に言いたい。NPMにpublishしたら（ほぼ）消せないことを](https://qiita.com/jamashita/items/6e8b2bedc0d47d3f7748))
 
-* Github Actions を使い自動化する方法もあるようですが、ビルド＋`npm publish`の方が直感的なのでこちらの手順を採用しました
+そこで調べてみたところ[GitHub Packages](https://github.co.jp/features/packages)を使えば、ライブラリを公開することができるようです。登録(publush)と、利用手順をまとめました。
 
-## 概要
+* Github Actions を使い自動化する方法もあるようですが、ライブラリ用にビルド＋`npm publish`の方が直感的なのでこちらの手順を採用しました
+
+## 概要　
 
 * ①`create-react-app` でコンポーネントを作成
   * `npm start` で動作確認
 * ②rollup.jsでライブラリをビルド
-  * ライブラリに公開するコンポーネントをexport
+  * 公開するコンポーネントをexport
   * ビルドスクリプトを作成
 * ③[GitHub Packages](https://github.co.jp/features/packages)へ登録
   * Github パーソナル アクセス トークンの取得
-  * .npmrcファイルを追加し、リポジトリとトークンの設定
+  * .npmrcファイルを追加し、リポジトリとトークンを設定
 * ④(別プロジェクトで)登録したライブラリをインストールして動作確認
   * `npm install @githubユーザ名/パッケージ名` でインストール
 
@@ -31,7 +33,6 @@
 をそのまま利用します
 
 
-
 実行してサンプル画面が表示されることを確認します
 ```bash
 npm start
@@ -41,7 +42,7 @@ npm start
 
 ###  ②rollup.jsでライブラリをビルド
 
-ライブラリとしてパッケージングするため[rollup.js](https://rollupjs.org/)をインストールします
+ライブラリとしてパッケージングするため[rollup.js](https://rollupjs.org/)(ES6ネイティブなモジュールバンドラ)をインストールします
 
 ```bash
 npm i -D rollup rollup-plugin-delete rollup-plugin-peer-deps-external rollup-plugin-postcss rollup-plugin-typescript2 @rollup/plugin-commonjs @rollup/plugin-node-resolve
@@ -131,6 +132,7 @@ export { default as iconMaker } from './iconMaker';
 #### `package.json`に、出力するファイル名の追加
 ```json
 {
+  "name": "@<ユーザ名>/ライブラリ名"
   "version": "0.0.1",
   "private": false,
   "main": "dist/lib.js",
@@ -144,6 +146,10 @@ export { default as iconMaker } from './iconMaker';
   "repository": "https://github.com/<ユーザ名>/name-icon-lib.git",
 }
 ```
+
+* `@<ユーザ名>/ライブラリ名`
+
+  ライブラリ名の前に、githubのユーザ名を追記します
 
 * `"version": "0.0.1"`
 
@@ -161,15 +167,14 @@ export { default as iconMaker } from './iconMaker';
 
   ESModuleのエントリーポイントファイルを指定します(パッケージのルートからの相対パス)
 
-
 * `files`
 
-  配布するパッケージに含まれるフォルダを指定します
+  配布するパッケージが含まれるフォルダを指定します
 
 
 * `"publishConfig": {`
 
-  [GitHub Packages](https://github.co.jp/features/packages)に登録するために記載します(書かないと、npmに登録されるはず)
+  [GitHub Packages](https://github.co.jp/features/packages)に登録するために記載します(書かないと、npmに登録される)
 
 * `"repository": ～`
 
@@ -177,7 +182,7 @@ export { default as iconMaker } from './iconMaker';
 
 #### `tsconfig.build.json`を追加(ビルド用の設定)
 
-rollup.jsでパッケージングするための`tsconfig.build.json`を作成します。
+rollup.jsでパッケージングするためのビルド設定`tsconfig.build.json`をプロジェクトルートに作成します
 
 ```json
 {
