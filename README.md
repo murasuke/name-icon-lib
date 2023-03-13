@@ -303,6 +303,9 @@ npm notice Publishing to https://npm.pkg.github.com/murasuke with tag latest and
 + @murasuke/name-icon-lib@0.0.11
 ```
 
+Githubの`Packages`タブに、publishしたパッケージが追加されます
+![img24](./img/img24.png)
+
 ### ④(別プロジェクトで)登録したライブラリをインストールして動作確認
 
 登録したパッケージを別プロジェクトでインストールして利用します
@@ -324,8 +327,6 @@ npm install <Githubユーザ名>:<発行したパッケージ名>
 ```
 npm install murasuke/name-icon-lib
 ```
-
-
 
 ## 参考ページ
 
